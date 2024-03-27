@@ -1,6 +1,9 @@
 # Apple
 .DS_Store
 
+# App specific
+app/uploads
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
