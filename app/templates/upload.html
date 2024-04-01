@@ -120,33 +120,46 @@
                                     surprised.innerHTML  = data['data']['surprised'];
                                 })
                             }
-
+                            
+                            var speech_data = {{speech_data|safe}};
+                            console.log(speech_data)
                             rangeslider.update = function(value) {
                                 current = value;
                                 
-                                fetch('/slider_update', 
-                                    {
-                                        headers: {
-                                        'Accept': 'application/json',
-                                        'Content-Type': 'application/json'
-                                        },
-                                        method: "POST",
-                                        body: JSON.stringify({idx: current})
-                                    }
-                                )
-                                .then(resp => resp.json())
-                                .then((data) => {
-                                    console.log(data)
-                                    output.innerHTML = data["pred"]
-                                    angry.innerHTML  = data['data']['angry']
-                                    calm.innerHTML  = data['data']['calm']
-                                    disgust.innerHTML  = data['data']['disgust']
-                                    fearful.innerHTML  = data['data']['fearful']
-                                    happy.innerHTML  = data['data']['happy']
-                                    neutral.innerHTML  = data['data']['neutral']
-                                    sad.innerHTML  = data['data']['sad']
-                                    surprised.innerHTML  = data['data']['surprised'];
-                                })
+                                // fetch('/slider_update', 
+                                //     {
+                                //         headers: {
+                                //         'Accept': 'application/json',
+                                //         'Content-Type': 'application/json'
+                                //         },
+                                //         method: "POST",
+                                //         body: JSON.stringify({idx: current})
+                                //     }
+                                // )
+                                // .then(resp => resp.json())
+                                // .then((data) => {
+                                //     console.log(data)
+                                //     output.innerHTML = data["pred"]
+                                //     angry.innerHTML  = data['data']['angry']
+                                //     calm.innerHTML  = data['data']['calm']
+                                //     disgust.innerHTML  = data['data']['disgust']
+                                //     fearful.innerHTML  = data['data']['fearful']
+                                //     happy.innerHTML  = data['data']['happy']
+                                //     neutral.innerHTML  = data['data']['neutral']
+                                //     sad.innerHTML  = data['data']['sad']
+                                //     surprised.innerHTML  = data['data']['surprised'];
+                                // })
+
+                                // console.log(data)
+                                output.innerHTML = speech_data["preds_str"][current]
+                                angry.innerHTML  = speech_data["interps"][current]['angry']
+                                calm.innerHTML  = speech_data["interps"][current]['calm']
+                                disgust.innerHTML  = speech_data["interps"][current]['disgust']
+                                fearful.innerHTML  = speech_data["interps"][current]['fearful']
+                                happy.innerHTML  = speech_data["interps"][current]['happy']
+                                neutral.innerHTML  = speech_data["interps"][current]['neutral']
+                                sad.innerHTML  = speech_data["interps"][current]['sad']
+                                surprised.innerHTML  = speech_data["interps"][current]['surprised'];
                                 
                             }
                 
