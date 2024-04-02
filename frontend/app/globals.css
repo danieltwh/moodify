@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --beige: #f7ece1;
+    --purple: #9067c6;
+    --darkPurple: #242038;
+    --lightPurple: #eae1ea;
+    --white: #ffffff;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-beige text-purple;
+  }
+}
