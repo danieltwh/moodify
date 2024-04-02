@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 </head>
+
 <body>
     <div class="container">
         <div class="row justify-content-center">
@@ -38,28 +40,28 @@
                 </video>
                 <form action="/analyse" method="get">
                     <input type="submit" id="analyse" name="analyse" value="Analyse" class="btn btn-primary">
-                    
+
                 </form>
                 <!-- <div id="time"></div> -->
                 {% endif %}
                 {% if 'speech_data' in session %}
 
-                
+
 
                 <h2>Prediction</h2>
-                <form method = 'POST'>
-                    <div class="rangeslider" id="sliderRange"> 
+                <form method='POST'>
+                    <div class="rangeslider" id="sliderRange">
                         <!-- <input type="range" min="0" max={{session['preds_str']|length - 1}} value="0" class="myslider" id="sliderRange">  -->
                         <p>
                             <span id="emotion">Emotion:</span>
                             <span id="curr_pred_str">{{session['speech_data']['preds_str'][0]}}</span>
-                        </p> 
-                        
+                        </p>
+
                         <p>
                             <span id="details">Details</span>
-                        </p> 
+                        </p>
                         <ul>
-                          
+
 
                             <li>Angry: <span id="angry"></span></li>
                             <li>Calm: <span id="calm"></span></li>
@@ -70,12 +72,24 @@
                             <li>Sad: <span id="sad"></span></li>
                             <!-- <li>Surprised: <span id="surprised"></span></li> -->
                         </ul>
-                    </div> 
-                        
-                    <script> 
+                    </div>
+                
+                <h2>Transcription</h2>
+
+                    <div class="box" id="transcription_box">
+                        <!-- <input type="range" min="0" max={{session['preds_str']|length - 1}} value="0" class="myslider" id="sliderRange">  -->
+
+                        {% if session.get('text') %}
+                        <p>
+                            <span id="transcription">{{session['text']}}</span>
+                        </p>
+                        {% endif %}
+                    </div>
+                
+                    <script>
                         const Http = new XMLHttpRequest();
-                        var rangeslider = document.getElementById("sliderRange"); 
-                        var output = document.getElementById("curr_pred_str"); 
+                        var rangeslider = document.getElementById("sliderRange");
+                        var output = document.getElementById("curr_pred_str");
                         var angry = document.getElementById("angry");
                         var calm = document.getElementById("calm");
                         var disgust = document.getElementById("disgust");
@@ -85,10 +99,10 @@
                         var sad = document.getElementById("sad");
                         // var surprised = document.getElementById("surprised"); 
                         var current = 0;
-                                    
+
                         // rangeslider.oninput = function() {
                         //     current = this.value;
-                            
+
                         //     // if (current < 33){
                         //     //     output.innerHTML = 'Reverse';
                         //     //     current = 'reverse'
@@ -101,7 +115,7 @@
                         //     //     output.innerHTML = 'Drive';
                         //     //     current = 'drive'
                         //     // }
-                        
+
                         //     // I've added this call to the server, which send 'current' value
                         //     // Http.open('POST', '/slider_update')
                         //     // Http.send(current)
@@ -130,12 +144,12 @@
                         //         surprised.innerHTML  = data['data']['surprised'];
                         //     })
                         // }
-                        
-                        var speech_data = {{speech_data|safe}};
+
+                        var speech_data = {{ speech_data| safe}};
                         console.log(speech_data)
-                        rangeslider.update = function(value) {
+                        rangeslider.update = function (value) {
                             current = value;
-                            
+
                             // fetch('/slider_update', 
                             //     {
                             //         headers: {
@@ -162,42 +176,40 @@
 
                             // console.log(data)
                             output.innerHTML = speech_data["preds_str"][current]
-                            angry.innerHTML  = speech_data["interps"][current]['angry']
-                            calm.innerHTML  = speech_data["interps"][current]['calm']
-                            disgust.innerHTML  = speech_data["interps"][current]['disgust']
-                            fearful.innerHTML  = speech_data["interps"][current]['fearful']
-                            happy.innerHTML  = speech_data["interps"][current]['happy']
-                            neutral.innerHTML  = speech_data["interps"][current]['neutral']
-                            sad.innerHTML  = speech_data["interps"][current]['sad']
+                            angry.innerHTML = speech_data["interps"][current]['angry']
+                            calm.innerHTML = speech_data["interps"][current]['calm']
+                            disgust.innerHTML = speech_data["interps"][current]['disgust']
+                            fearful.innerHTML = speech_data["interps"][current]['fearful']
+                            happy.innerHTML = speech_data["interps"][current]['happy']
+                            neutral.innerHTML = speech_data["interps"][current]['neutral']
+                            sad.innerHTML = speech_data["interps"][current]['sad']
                             // surprised.innerHTML  = speech_data["interps"][current]['surprised'];
                         }
-            
-                    </script> 
 
-                        <script> 
-                        (function() {
-                        var video = document.getElementsByTagName('video')[0]
-                        // var time = document.getElementById('time');
-                        var rangeslider = document.getElementById("sliderRange"); 
-                        video.addEventListener("timeupdate", function(event){
-                            var idx = parseInt(video.currentTime);
-                            // console.log(idx)
-                            // time.innerHTML = idx;
-                            // rangeslider.value = idx-1;
-                            rangeslider.update(idx);
-                        })
-                        })();
+                    </script>
 
-                        </script> 
-                
-                
-                    </form>
+                    <script>
+                            (function () {
+                                var video = document.getElementsByTagName('video')[0]
+                                // var time = document.getElementById('time');
+                                var rangeslider = document.getElementById("sliderRange");
+                                video.addEventListener("timeupdate", function (event) {
+                                    var idx = parseInt(video.currentTime);
+                                    // console.log(idx)
+                                    // time.innerHTML = idx;
+                                    // rangeslider.value = idx-1;
+                                    rangeslider.update(idx);
+                                })
+                            })();
+
+                    </script>
+
+
+                </form>
                 {% endif %}
             </div>
         </div>
     </div>
 </body>
+
 </html>
-
-
-

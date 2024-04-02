@@ -6,6 +6,7 @@ import json
 
 from src import speech_emotion
 from src.face_detection import face_detection_model
+from src.speech_to_text import speech_to_text_model
 
 # from .CV.eye_tracker import *
 
@@ -175,6 +176,7 @@ def analyse():
             shutil.rmtree(user_dir_img)
         
 
+        # Face Detection
         face_detection_model.save_cropped_faces(session['user'], path)
         # face_detection_model.video_with_box(session['user'], path)
 
@@ -182,6 +184,7 @@ def analyse():
 
         # shutil.move(os.path.join(new_video_path), os.path.join(UPLOAD_DIR, file))
 
+        # Speech Emotion
         preds, interps = speech_emotion.analyse_audio_path(path)
 
         preds_str = list(map(lambda x: speech_emotion.id2label[x], preds))
@@ -197,6 +200,10 @@ def analyse():
         # session["interps"] = interps
         # session['curr_pred'] = preds_str[0]
         # session['curr_interps'] = interps[0]
+
+        # Speech to Text
+        text = speech_to_text_model.analyse(session['user'], path)
+        session['text'] = text
 
     # speech_data = {
     #     "preds_str": session["preds_str"],

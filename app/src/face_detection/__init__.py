@@ -10,3 +10,4 @@ filename = "yolov8n-face.pt"
 path = os.path.join(model_dir, filename)
 print(path)
 face_detection_model = FaceDetection(path)
+
