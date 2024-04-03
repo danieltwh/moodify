@@ -49,8 +49,11 @@ def signin():
 
         if username == valid_username:
             session['user'] = username
+
+            user_dir = os.path.join(UPLOAD_DIR, username)
             # Create directory for user
-            os.mkdir(os.path.join(UPLOAD_DIR, username))
+            if not os.path.exists(user_dir):
+                os.mkdir(user_dir)
 
             return redirect(url_for("dashboard"))
         else:
