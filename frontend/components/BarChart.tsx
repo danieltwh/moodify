@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Progress } from "./ui/progress";
+import { TimestampedSentiments } from "@/app/types";
 
 const Bar: React.FC<{ label: string; value: number }> = ({ label, value }) => {
   return (
@@ -9,10 +11,32 @@ const Bar: React.FC<{ label: string; value: number }> = ({ label, value }) => {
   );
 };
 
-const BarChart: React.FC<{ label: string; outcome: string }> = ({
-  label,
-  outcome,
-}) => {
+const BarChart: React.FC<{
+  label: string;
+  timestampedSentiments: TimestampedSentiments;
+  videoTime: number;
+}> = ({ label, timestampedSentiments, videoTime }) => {
+  const [outcome, setOutcome] = useState<string>("");
+  const [happy, setHappy] = useState<number>(0);
+  const [neutral, setNeutral] = useState<number>(0);
+  const [surprised, setSurprised] = useState<number>(0);
+  const [sad, setSad] = useState<number>(0);
+  const [fearful, setFearful] = useState<number>(0);
+  const [angry, setAngry] = useState<number>(0);
+
+  useEffect(() => {
+    setOutcome(timestampedSentiments.preds_str?.[videoTime]);
+    setHappy(timestampedSentiments.interps[videoTime]?.happy);
+    setNeutral(timestampedSentiments.interps[videoTime]?.neutral);
+    setSurprised(timestampedSentiments.interps[videoTime]?.surprised);
+    setSad(timestampedSentiments.interps[videoTime]?.sad);
+    setFearful(timestampedSentiments.interps[videoTime]?.fearful);
+    setAngry(timestampedSentiments.interps[videoTime]?.angry);
+  }, [
+    videoTime,
+    timestampedSentiments.preds_str,
+    timestampedSentiments.interps,
+  ]);
   return (
     <div className="flex flex-col w-full gap-2">
       <div className="flex h-8">
@@ -23,12 +47,12 @@ const BarChart: React.FC<{ label: string; outcome: string }> = ({
       </div>
 
       <div className="flex flex-col gap-2 w-full">
-        <Bar label="Happy" value={75} />
-        <Bar label="Neutral" value={66} />
-        <Bar label="Surprised" value={42} />
-        <Bar label="Sad" value={15} />
-        <Bar label="Fearful" value={8} />
-        <Bar label="Angry" value={2} />
+        <Bar label="Happy" value={happy * 100} />
+        <Bar label="Neutral" value={neutral * 100} />
+        <Bar label="Surprised" value={surprised * 100} />
+        <Bar label="Sad" value={sad * 100} />
+        <Bar label="Fearful" value={fearful * 100} />
+        <Bar label="Angry" value={angry * 100} />
       </div>
     </div>
   );

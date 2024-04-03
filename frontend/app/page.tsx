@@ -2,34 +2,63 @@
 
 import BarChart from "@/components/BarChart";
 import SentimentScoreToggle from "@/components/SentimentScoreToggle";
+import { useEffect, useRef, useState } from "react";
+import mockInference from "@/_mock/sample_pred.json";
+import { TimestampedSentiments } from "./types";
 
 const Home: React.FC = () => {
+  const [transcript, setTranscript] = useState("");
+  const [speechSentiment, setSpeechSentiment] = useState<TimestampedSentiments>(
+    { preds_str: [], interps: [] }
+  );
+  const [facialSentiment, setFacialSentiment] = useState<TimestampedSentiments>(
+    { preds_str: [], interps: [] }
+  );
+  const [overallSentiment, setOverallSentiment] =
+    useState<TimestampedSentiments>({ preds_str: [], interps: [] });
+  const [videoTime, setVideoTime] = useState<number>(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    setTranscript(mockInference?.text);
+    setSpeechSentiment(mockInference?.speech_data);
+    setFacialSentiment(mockInference?.face_emotion);
+    setOverallSentiment(mockInference?.overall);
+  }, []);
   return (
     <main className="flex min-h-screen flex-col space-y-6 items-center p-10 py-4">
       <text className="text-5xl font-medium">Moodify</text>
       <div className="flex justify-around gap-8">
         <video
           controls
+          ref={videoRef}
           src="speech.mp4"
           className="aspect-video bg-black w-7/12 h-72"
+          onTimeUpdate={() => {
+            if (videoRef.current) {
+              setVideoTime(Math.floor(videoRef.current.currentTime));
+            }
+          }}
         ></video>
-        <p className="w-5/12 text-darkPurple text-justify">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry`s standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
-        </p>
+        <p className="w-5/12 text-darkPurple text-justify">{transcript}</p>
       </div>
       <SentimentScoreToggle />
       <div className="flex justify-around gap-8 w-full">
-        <BarChart label="Speech" outcome="Happy" />
-        <BarChart label="Expression" outcome="Surprised" />
-        <BarChart label="Overall" outcome="Happy" />
+        <BarChart
+          label="Speech"
+          timestampedSentiments={speechSentiment}
+          videoTime={videoTime}
+        />
+        <BarChart
+          label="Expression"
+          timestampedSentiments={facialSentiment}
+          videoTime={videoTime}
+        />
+        <BarChart
+          label="Overall"
+          timestampedSentiments={overallSentiment}
+          videoTime={videoTime}
+        />
       </div>
     </main>
   );
