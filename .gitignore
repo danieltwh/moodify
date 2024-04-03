@@ -1,6 +1,10 @@
 # Apple
 .DS_Store
 
+#Models
+*.keras
+*.h5
+
 # App specific
 app/uploads
 
@@ -131,6 +135,7 @@ celerybeat.pid
 env/
 venv/
 ENV/
+emotion_detection/
 env.bak/
 venv.bak/
 
