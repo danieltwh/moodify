@@ -23,7 +23,8 @@ const Analysis: React.FC = () => {
     setFacialSentiment(mockInference?.face_emotion);
   }, []);
   return (
-    <div className="space-y-3 w-7/12">
+    <div className="space-y-3">
+      <text className="text-2xl font-semibold">Video X</text>
       <div className="flex justify-around gap-8">
         <video
           controls

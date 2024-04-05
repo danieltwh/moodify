@@ -7,7 +7,8 @@ import { useRef } from "react";
 const Home: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
+      <text className="text-5xl font-medium">Moodify</text>
       <p className="text-darkPurple text-xl">
         Find out how your investors feel. Uncover hidden insights
         <br></br>
@@ -22,7 +23,9 @@ const Home: React.FC = () => {
         className="hidden"
         onChange={(e) => console.log(e.target.files?.[0])}
       ></input>
-      <UploadsTable />
+      <div className="pt-10">
+        <UploadsTable />
+      </div>
     </div>
   );
 };
