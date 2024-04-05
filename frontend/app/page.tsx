@@ -1,5 +1,6 @@
 "use client";
 
+import UploadsTable from "@/components/UploadsTable";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 
@@ -21,6 +22,7 @@ const Home: React.FC = () => {
         className="hidden"
         onChange={(e) => console.log(e.target.files?.[0])}
       ></input>
+      <UploadsTable />
     </div>
   );
 };
