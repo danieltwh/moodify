@@ -6,7 +6,7 @@ import { useRef } from "react";
 const Home: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   return (
-    <div className="text-center space-y-6">
+    <div className="space-y-6">
       <p className="text-darkPurple text-xl">
         Find out how your investors feel. Uncover hidden insights
         <br></br>

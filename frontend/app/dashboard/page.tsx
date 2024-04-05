@@ -23,7 +23,7 @@ const Analysis: React.FC = () => {
     setFacialSentiment(mockInference?.face_emotion);
   }, []);
   return (
-    <div className="space-y-3 content-center w-7/12">
+    <div className="space-y-3 w-7/12">
       <div className="flex justify-around gap-8">
         <video
           controls
@@ -50,7 +50,7 @@ const Analysis: React.FC = () => {
           videoTime={videoTime}
         />
       </div>
-      <p className="w-full text-darkPurple text-center">{transcript}</p>
+      <p className="w-full text-darkPurple">{transcript}</p>
     </div>
   );
 };

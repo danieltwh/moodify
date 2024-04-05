@@ -40,10 +40,10 @@ const BarChart: React.FC<{
   return (
     <div className="flex flex-col w-full gap-2">
       <div className="flex h-8">
-        <text className="text-lg text-center w-1/3 bg-lightPurple">
+        <text className="text-lg w-1/3 bg-lightPurple">
           {label}
         </text>
-        <text className="text-lg text-center w-2/3 bg-white ">{outcome}</text>
+        <text className="text-lg w-2/3 bg-white ">{outcome}</text>
       </div>
 
       <div className="flex flex-col gap-2 w-full">

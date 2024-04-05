@@ -8,7 +8,7 @@ const UNSELECTED_CLASSNAME = "text-darkPurple hover:cursor-pointer";
 const SentimentScoreToggle: React.FC<{}> = () => {
   const [videoSelected, setVideoSelected] = useState(false);
   return (
-    <div className="text-center">
+    <div>
       <text className="text-darkPurple">View sentiment for: </text>
       <text
         className={videoSelected ? SELECTED_CLASSNAME : UNSELECTED_CLASSNAME}
