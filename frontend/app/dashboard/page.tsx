@@ -14,8 +14,6 @@ const Analysis: React.FC = () => {
   const [facialSentiment, setFacialSentiment] = useState<TimestampedSentiments>(
     { preds_str: [], interps: [] }
   );
-  const [overallSentiment, setOverallSentiment] =
-    useState<TimestampedSentiments>({ preds_str: [], interps: [] });
   const [videoTime, setVideoTime] = useState<number>(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -23,26 +21,24 @@ const Analysis: React.FC = () => {
     setTranscript(mockInference?.text);
     setSpeechSentiment(mockInference?.speech_data);
     setFacialSentiment(mockInference?.face_emotion);
-    setOverallSentiment(mockInference?.overall);
   }, []);
   return (
-    <div className="space-y-2">
+    <div className="space-y-3 content-center w-7/12">
       <div className="flex justify-around gap-8">
         <video
           controls
           ref={videoRef}
           src="speech.mp4"
-          className="aspect-video bg-black w-7/12 h-72"
+          className="aspect-video bg-black w-full h-72"
           onTimeUpdate={() => {
             if (videoRef.current) {
               setVideoTime(Math.floor(videoRef.current.currentTime));
             }
           }}
         ></video>
-        <p className="w-5/12 text-darkPurple text-justify">{transcript}</p>
       </div>
       <SentimentScoreToggle />
-      <div className="flex justify-around gap-8 w-full">
+      <div className="flex justify-around gap-8">
         <BarChart
           label="Speech"
           timestampedSentiments={speechSentiment}
@@ -53,12 +49,8 @@ const Analysis: React.FC = () => {
           timestampedSentiments={facialSentiment}
           videoTime={videoTime}
         />
-        <BarChart
-          label="Overall"
-          timestampedSentiments={overallSentiment}
-          videoTime={videoTime}
-        />
       </div>
+      <p className="w-full text-darkPurple text-center">{transcript}</p>
     </div>
   );
 };
