@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Progress } from "./ui/progress";
-import { TimestampedSentiments } from "@/app/types";
+import { SentimentScores } from "@/app/types";
 
 const Bar: React.FC<{ label: string; value: number }> = ({ label, value }) => {
   return (
@@ -13,7 +13,7 @@ const Bar: React.FC<{ label: string; value: number }> = ({ label, value }) => {
 
 const BarChart: React.FC<{
   label: string;
-  timestampedSentiments: TimestampedSentiments;
+  timestampedSentiments: SentimentScores;
   videoTime: number;
 }> = ({ label, timestampedSentiments, videoTime }) => {
   const [outcome, setOutcome] = useState<string>("");

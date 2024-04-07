@@ -4,24 +4,39 @@ import BarChart from "@/components/BarChart";
 import SentimentScoreToggle from "@/components/SentimentScoreToggle";
 import { useEffect, useRef, useState } from "react";
 import mockInference from "@/_mock/sample_pred.json";
-import { TimestampedSentiments } from "@/app/types";
+import { SentimentScores } from "@/app/types";
 
 const Analysis: React.FC = () => {
-  const [transcript, setTranscript] = useState("");
-  const [speechSentiment, setSpeechSentiment] = useState<TimestampedSentiments>(
-    { preds_str: [], interps: [] }
-  );
-  const [facialSentiment, setFacialSentiment] = useState<TimestampedSentiments>(
-    { preds_str: [], interps: [] }
-  );
+  const [transcript, setTranscript] = useState<string>("");
+
+  const [speechSentiment, setSpeechSentiment] = useState<SentimentScores>({
+    preds_str: [],
+    interps: [],
+  });
+  const [facialSentiment, setFacialSentiment] = useState<SentimentScores>({
+    preds_str: [],
+    interps: [],
+  });
+
+  const [aggregatedSpeechSentiment, setAggregatedSpeechSentiment] =
+    useState<SentimentScores>({ preds_str: [], interps: [] });
+  const [aggregatedFacialSentiment, setAggregatedFacialSentiment] =
+    useState<SentimentScores>({ preds_str: [], interps: [] });
+
   const [videoTime, setVideoTime] = useState<number>(0);
+  const [viewAggregatedScores, setViewAggregatedScores] =
+    useState<boolean>(true);
+
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    setTranscript(mockInference?.text);
-    setSpeechSentiment(mockInference?.speech_data);
-    setFacialSentiment(mockInference?.face_emotion);
+    setTranscript(mockInference.text);
+    setSpeechSentiment(mockInference.speech_data);
+    setFacialSentiment(mockInference.face_emotion);
+    setAggregatedSpeechSentiment(mockInference.aggregates.speech_data);
+    setAggregatedFacialSentiment(mockInference.aggregates.face_emotion);
   }, []);
+
   return (
     <div className="space-y-3">
       <text className="text-2xl font-semibold">Video X</text>
@@ -38,17 +53,24 @@ const Analysis: React.FC = () => {
           }}
         ></video>
       </div>
-      <SentimentScoreToggle />
+      <SentimentScoreToggle
+        viewAggregatedScores={viewAggregatedScores}
+        setViewAggregatedScores={setViewAggregatedScores}
+      />
       <div className="flex justify-around gap-8">
         <BarChart
           label="Speech"
-          timestampedSentiments={speechSentiment}
-          videoTime={videoTime}
+          timestampedSentiments={
+            viewAggregatedScores ? aggregatedSpeechSentiment : speechSentiment
+          }
+          videoTime={viewAggregatedScores ? 0 : videoTime}
         />
         <BarChart
           label="Expression"
-          timestampedSentiments={facialSentiment}
-          videoTime={videoTime}
+          timestampedSentiments={
+            viewAggregatedScores ? aggregatedFacialSentiment : facialSentiment
+          }
+          videoTime={viewAggregatedScores ? 0 : videoTime}
         />
       </div>
       <p className="w-full text-darkPurple">{transcript}</p>

@@ -7,7 +7,7 @@ interface Interp {
   angry: number;
 }
 
-export interface TimestampedSentiments {
+export interface SentimentScores {
   preds_str: string[];
   interps: Interp[];
 }
