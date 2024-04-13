@@ -6,7 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import mockInference from "@/_mock/sample_pred.json";
 import { SentimentScores } from "@/app/types";
 
-const Analysis: React.FC = () => {
+const Analysis: React.FC<{ params: { slug: string } }> = ({ params }) => {
+  console.log(params);
   const [transcript, setTranscript] = useState<string>("");
 
   const [speechSentiment, setSpeechSentiment] = useState<SentimentScores>({
@@ -44,7 +45,7 @@ const Analysis: React.FC = () => {
         <video
           controls
           ref={videoRef}
-          src="speech.mp4"
+          src={`http://127.0.0.1:5000/stream/${params.slug}`}
           className="aspect-video bg-black w-full h-72"
           onTimeUpdate={() => {
             if (videoRef.current) {

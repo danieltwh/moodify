@@ -18,4 +18,5 @@ export interface PastUpload {
   status: string;
   speechSentiment: string;
   expressionSentiment: string;
+  id: string;
 }

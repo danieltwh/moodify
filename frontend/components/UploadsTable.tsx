@@ -45,7 +45,7 @@ const UploadsTable: React.FC = () => {
               <TableCell
                 className="bg-lightPurple hover:cursor-pointer"
                 onClick={() => {
-                  router.push("/dashboard");
+                  router.push(`/dashboard/${pastUpload.id}`);
                 }}
               >
                 {pastUpload.title}

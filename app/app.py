@@ -199,6 +199,7 @@ def video_metadata():
 
     for d in videos_dict:
         intermediate = {}
+        intermediate["id"] = d["video_id"]
         intermediate["title"] = d["video_name"]
         intermediate["uploadDate"] = d["date_created"].strftime("%Y-%m-%d")
         intermediate["status"] = d["video_status"]
