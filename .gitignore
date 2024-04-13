@@ -6,7 +6,9 @@
 *.h5
 
 # App specific
-app/uploads
+/app/uploads/*
+!/app/uploads/test/
+!/app/uploads/c8dd5351-0653-4929-a177-f8a23892d88d/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
