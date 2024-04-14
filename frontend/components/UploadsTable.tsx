@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import mockPastUploads from "@/_mock/past_uploads.json";
+// import mockPastUploads from "@/_mock/past_uploads.json";
 import { PastUpload } from "@/app/types";
 import { useRouter } from "next/navigation";
 
@@ -17,7 +17,14 @@ const UploadsTable: React.FC = () => {
   const [pastUploads, setPastUploads] = useState<PastUpload[]>();
 
   useEffect(() => {
-    setPastUploads(mockPastUploads);
+    fetch("http://127.0.0.1:5000/video-metadata")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setPastUploads(data);
+      });
+    // setPastUploads(mockPastUploads);
   }, []);
 
   return (
@@ -38,7 +45,7 @@ const UploadsTable: React.FC = () => {
               <TableCell
                 className="bg-lightPurple hover:cursor-pointer"
                 onClick={() => {
-                  router.push("/dashboard");
+                  router.push(`/dashboard/${pastUpload.id}`);
                 }}
               >
                 {pastUpload.title}

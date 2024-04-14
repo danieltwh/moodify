@@ -21,7 +21,17 @@ const Home: React.FC = () => {
         ref={fileInputRef}
         type="file"
         className="hidden"
-        onChange={(e) => console.log(e.target.files?.[0])}
+        onChange={(e) => {
+          const videoFile = e.target.files?.[0];
+          const formData = new FormData();
+          if (videoFile) {
+            formData.append("file", videoFile);
+            fetch("http://127.0.0.1:5000/upload", {
+              method: "POST",
+              body: formData,
+            });
+          }
+        }}
       ></input>
       <div className="pt-10">
         <UploadsTable />

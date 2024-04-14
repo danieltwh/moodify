@@ -6,7 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import mockInference from "@/_mock/sample_pred.json";
 import { SentimentScores } from "@/app/types";
 
-const Analysis: React.FC = () => {
+const Analysis: React.FC<{ params: { slug: string } }> = ({ params }) => {
+  const videoId = params.slug;
   const [transcript, setTranscript] = useState<string>("");
 
   const [speechSentiment, setSpeechSentiment] = useState<SentimentScores>({
@@ -30,11 +31,23 @@ const Analysis: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    setTranscript(mockInference.text);
-    setSpeechSentiment(mockInference.speech_data);
-    setFacialSentiment(mockInference.face_emotion);
-    setAggregatedSpeechSentiment(mockInference.aggregates.speech_data);
-    setAggregatedFacialSentiment(mockInference.aggregates.face_emotion);
+    fetch(`http://127.0.0.1:5000/video/${videoId}/predictions`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setTranscript(data.text);
+        setSpeechSentiment(data.speech_data);
+        setFacialSentiment(data.face_emotion);
+        setAggregatedSpeechSentiment(data.aggregates.speech_data);
+        setAggregatedFacialSentiment(data.aggregates.face_emotion);
+      });
+    // setTranscript(mockInference.text);
+    // setSpeechSentiment(mockInference.speech_data);
+    // setFacialSentiment(mockInference.face_emotion);
+    // setAggregatedSpeechSentiment(mockInference.aggregates.speech_data);
+    // setAggregatedFacialSentiment(mockInference.aggregates.face_emotion);
   }, []);
 
   return (
@@ -44,7 +57,7 @@ const Analysis: React.FC = () => {
         <video
           controls
           ref={videoRef}
-          src="speech.mp4"
+          src={`http://127.0.0.1:5000/stream/${videoId}`}
           className="aspect-video bg-black w-full h-72"
           onTimeUpdate={() => {
             if (videoRef.current) {
