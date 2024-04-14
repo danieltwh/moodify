@@ -5,8 +5,39 @@ INSERT INTO videos
     ('test', 'video.mp4', 'completed','2023-03-13 20:46:43.90241', '{
     "overall": {
         "speech": "fearful",
-        "face_emotion": "fearful",
-        "overall": "fearful"
+        "face_emotion": "fearful"
+    },
+    "aggregates": {
+        "speech_data": {
+        "preds_str": ["happy"],
+        "interps": [
+            {
+            "angry": 0.0076,
+            "calm": -0.0306,
+            "disgust": -0.0481,
+            "fearful": 0.0379,
+            "happy": -0.0496,
+            "neutral": -0.0098,
+            "sad": 0.0172,
+            "surprised": 0.0172
+            }
+        ]
+        },
+        "face_emotion": {
+        "preds_str": ["neutral"],
+        "interps": [
+            {
+            "angry": 0.0076,
+            "calm": -0.0306,
+            "disgust": -0.0481,
+            "fearful": 0.0379,
+            "happy": -0.0496,
+            "neutral": -0.0098,
+            "sad": 0.0172,
+            "surprised": 0.0172
+            }
+        ]
+        }
     },
     "speech_data": {
         "preds_str": [

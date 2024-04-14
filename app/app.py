@@ -181,6 +181,7 @@ def upload():
     # return render_template("dashboard.html")
     return redirect(url_for("dashboard"))
 
+
 @app.route("/video-metadata", methods=["GET"])
 def video_metadata():
     # if 'username' not in session:
@@ -224,6 +225,14 @@ def video_metadata():
     # ]
 
     return jsonify(resp)
+
+
+@app.route("/video/<id>/predictions", methods=["GET"])
+def video_predictions(id):
+    postgress = init_postgres()
+
+    video = postgress.query(models.Videos).get(id).__dict__
+    return jsonify(json.loads(video["predictions"]))
 
 
 # @app.route("/reset", methods=["GET", "POST"])
