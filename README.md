@@ -77,13 +77,15 @@
     Keep the other settings as default
     DB available at `localhost:5455`
 
-3. Backend API available at `localhost:5050`
+3. RabbitMQ available at `localhost:5672`. RabbitMQ Web UI available at `localhost:15672`
 
-4. Frontend available at `localhost:80`
-
-5. RabbitMQ available at `localhost:5672`. RabbitMQ Web UI available at `localhost:15672`
-
-6. To shutdown the application, run the following command.
+4. To shutdown the application, run the following command.
     ```bash
     docker-compose down
     ```
+
+<!-- 3. Backend API available at `localhost:5050` -->
+
+<!-- 4. Frontend available at `localhost:80` -->
+
+
