@@ -93,7 +93,7 @@ def allowed_file(filename):
 #     return render_template("signin.html")
 
 
-@app.route("/upload", methods=["GET", "POST"])
+@app.route("/upload", methods=["POST"])
 def upload():
     # if 'username' not in session:
     #     flash("Please log in to access this page.", category="error")
@@ -104,14 +104,14 @@ def upload():
 
     if request.method == "POST":
         if "file" not in request.files:
-            flash("No file part.", category="error")
-            return redirect(request.url)
+            resp = jsonify(status="failed", error_message="No file attached.")
+            return resp
 
         file = request.files["file"]
 
         if file.filename == "":
-            flash("No selected file.", category="error")
-            return redirect(request.url)
+            resp = jsonify(status="failed", error_message="No file attached.")
+            return resp
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
@@ -167,7 +167,8 @@ def upload():
 
             resp = jsonify(status="success")
             return resp
-
+    
+    
     # speech_data = {}
 
     # if "preds"
@@ -179,7 +180,7 @@ def upload():
     # }
 
     # return render_template("dashboard.html")
-    return redirect(url_for("dashboard"))
+    # return redirect(url_for("dashboard"))
 
 
 @app.route("/video-metadata", methods=["GET"])
@@ -207,8 +208,8 @@ def video_metadata():
 
         if d["predictions"] != "":
             predictions = json.loads(d["predictions"])
-            intermediate["speechSentiment"] = predictions["overall"]["speech"]
-            intermediate["expressionSentiment"] = predictions["overall"]["face_emotion"]
+            intermediate["speechSentiment"] = predictions["aggregates"]["speech_data"]
+            intermediate["expressionSentiment"] = predictions["aggregates"]["face_emotion"]
         else:
             intermediate["speechSentiment"] = "-"
             intermediate["expressionSentiment"] = "-"
