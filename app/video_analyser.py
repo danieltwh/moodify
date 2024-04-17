@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 import subprocess
 import re
@@ -19,7 +20,7 @@ from extensions import init_postgres, open_rabbitmq_connection
 import models
 
 # Load the models
-# from src.Mood_detector import face_emotion_detector
+from src.Mood_detector import face_emotion_detector
 from src import speech_emotion
 from src.face_detection import face_detection_model
 from src.speech_to_text import speech_to_text_model
@@ -42,11 +43,11 @@ async def analyse_video(video_id, video_name):
 
     path_to_cropped_face = os.path.join(UPLOAD_DIR, video_id, "img/crops/face")
 
-    # preds, interps = face_emotion_detector.analyse_emotion(path_to_cropped_face)
+    preds, interps = face_emotion_detector.analyse_emotion(path_to_cropped_face)
 
     print("here: analyse video")
-    # return preds, interps
-    return None, None
+    return preds, interps
+    # return None, None
 
 
 async def analyse_speech(path):
@@ -97,23 +98,22 @@ async def main():
 
                         task_ls = []
 
-                        if not os.path.isdir(os.path.join(path, "img")):
-                            task_ls.append(
-                                asyncio.create_task(analyse_video(video_id, video_name))
-                            )
-                        else:
-                            task_ls.append([None, None])
+                        if os.path.isdir(os.path.join(UPLOAD_DIR, video_id, "img")):
+                            shutil.rmtree(os.path.join(UPLOAD_DIR, video_id, "img"))
+
+                        task_ls.append(
+                            asyncio.create_task(analyse_video(video_id, video_name))
+                        )
 
                         task_ls.append(asyncio.create_task(analyse_speech(path)))
 
-                        if not os.path.isdir(os.path.join(path, "txt")):
-                            task_ls.append(
-                                asyncio.create_task(
-                                    speech_to_text(video_id, video_name)
-                                )
+                        if os.path.isdir(os.path.join(UPLOAD_DIR, video_id, "txt")):
+                            shutil.rmtree(os.path.join(UPLOAD_DIR, video_id, "txt"))
+                        task_ls.append(
+                            asyncio.create_task(
+                                speech_to_text(video_id, video_name)
                             )
-                        else:
-                            task_ls.append(None)
+                        )
 
                         # Retrieve the results
                         results = await asyncio.gather(*task_ls)
@@ -122,12 +122,17 @@ async def main():
                         text = results[2]
                         face_preds, face_interps = results[0]
 
-                        overall_speech_preds = max(set(speech_preds), key=speech_preds.count)
-                        overall_speech_interps = {k: sum(d[k] for d in speech_interps) / len(speech_interps) for k in speech_interps[0]}
+                        overall_speech_preds = None
+                        overall_speech_interps = None
+                        if speech_preds and speech_interps:
+                            overall_speech_preds = max(set(speech_preds), key=speech_preds.count)
+                            overall_speech_interps = {k: sum(d[k] for d in speech_interps) / len(speech_interps) for k in speech_interps[0]}
 
-
-                        overall_face_preds = max(set(face_preds), key=face_preds.count)
-                        overall_face_interps = {k: sum(d[k] for d in face_interps) / len(face_interps) for k in face_interps[0]}
+                        overall_face_preds = None
+                        overall_face_interps = None
+                        if face_preds and face_interps:
+                            overall_face_preds = max(set(face_preds), key=face_preds.count)
+                            overall_face_interps = {k: sum(d[k] for d in face_interps) / len(face_interps) for k in face_interps[0]}
 
                         body = {
                             "aggregates": {
