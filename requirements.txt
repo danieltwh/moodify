@@ -23,11 +23,12 @@ contextily==1.6.0
 contourpy==1.2.0
 cycler==0.12.1
 debugpy==1.8.0
-decorator==5.1.1
+decorator==4.4.2
 dnspython==2.6.1
 exceptiongroup==1.2.0
 executing==2.0.1
 Farama-Notifications==0.0.4
+ffmpeg==1.4
 filelock==3.13.3
 fiona==1.9.6
 Flask==3.0.2
@@ -50,6 +51,8 @@ h5py==3.10.0
 huggingface-hub==0.22.1
 hypothesis==6.99.13
 idna==3.4
+imageio==2.34.0
+imageio-ffmpeg==0.4.9
 importlib-metadata==6.8.0
 importlib-resources==6.1.1
 ipykernel==6.26.0
@@ -76,6 +79,7 @@ matplotlib-inline==0.1.6
 mercantile==1.2.1
 ml-dtypes==0.2.0
 motor==3.4.0
+moviepy==1.0.3
 mpmath==1.3.0
 msgpack==1.0.8
 nest-asyncio==1.5.8
@@ -96,6 +100,7 @@ pika==1.3.2
 Pillow==10.1.0
 platformdirs==4.0.0
 pooch==1.8.1
+proglog==0.1.10
 prompt-toolkit==3.0.41
 protobuf==4.23.4
 psutil==5.9.5
@@ -166,9 +171,3 @@ Werkzeug==3.0.1
 wrapt==1.14.1
 xyzservices==2023.10.1
 zipp==3.17.0
-
-
-sqlalchemy
-beanie
-# psycopg2-binary
-psycopg2
