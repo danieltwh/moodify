@@ -37,8 +37,11 @@ class EmotionDetector:
 
     #can edit this as necessary, for example remove disgust and apply softmax as necessary, if delete emotions,
     #adjust the index as necessary, alphabetical order is preserved due to how keras reads in directories
-    idx2emotion = {0:'angry', 1:'disgust', 2:'fear', 3:'happy', 4:'neutral', 5:'sad', 6:'surprise'}
-    overall_emotion = {'angry':0, 'disgust':0, 'fear':0, 'happy':0, 'neutral':0, 'sad':0, 'surprise':0}
+    # idx2emotion = {0:'angry', 1:'disgust', 2:'fear', 3:'happy', 4:'neutral', 5:'sad', 6:'surprise'}
+    idx2emotion = {0:'negative', 1:'negative', 2:'negative', 3:'positive', 4:'neutral', 5:'negative', 6:'positive'}
+
+
+    # overall_emotion = {'angry':0, 'disgust':0, 'fear':0, 'happy':0, 'neutral':0, 'sad':0, 'surprise':0}
     #get all the images in the path
     for item in os.listdir(path_to_user):
       cropped_img_path = os.path.join(path_to_user, item)
@@ -61,13 +64,13 @@ class EmotionDetector:
         for i,score in enumerate(list(pred)):
           emotion = idx2emotion[i]
           current_iteration[emotion] = score
-          overall_emotion[emotion] += score
+          # overall_emotion[emotion] += score
         
         interps.append(current_iteration)
       
     
     # overall_face_emotion = sorted(overall_emotion.items(), key=lambda x:x[1], reverse = True)[0][0]
-
+        
     return preds_str, interps 
     
 
