@@ -116,7 +116,7 @@ def upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_ext = filename.rsplit(".", 1)[1].lower()
-            filename = f"video.{file_ext}"
+            # filename = f"video.{file_ext}"
 
             video_id = str(uuid.uuid4())
             # print(video_id)
@@ -208,8 +208,8 @@ def video_metadata():
 
         if d["predictions"] != "":
             predictions = json.loads(d["predictions"])
-            intermediate["speechSentiment"] = predictions["aggregates"]["speech_data"]
-            intermediate["expressionSentiment"] = predictions["aggregates"]["face_emotion"]
+            intermediate["speechSentiment"] = predictions["aggregates"]["speech_data"]['preds_str'][0]
+            intermediate["expressionSentiment"] = predictions["aggregates"]["face_emotion"]['preds_str'][0]
         else:
             intermediate["speechSentiment"] = "-"
             intermediate["expressionSentiment"] = "-"

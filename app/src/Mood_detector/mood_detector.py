@@ -14,13 +14,13 @@ class EmotionDetector:
   #Should be the path to a cropped face, majority of the image should be face if not not likely to work well,
   #(can easily be changed to batch of images if necessary)
   def get_emotion(self, path_to_cropped_face):
-    pil_image = PIL.Image.open(path_to_cropped_face).convert('L')
+    pil_image = PIL.Image.open(path_to_cropped_face).convert('RGB')
 
     #reshape the pil image
     pil_image = pil_image.resize((48,48))
 
     #convert to numpy array
-    to_model = np.array(pil_image).reshape((1,48,48,1))
+    to_model = np.array(pil_image).reshape((1,48,48,3))
 
     #return the softmax output, in the following order: 1. Angry, 2. Disgust, 3. Fear, 4. Happy, 5. Neutral, 6. Sad
     #7.Surprise
@@ -38,7 +38,9 @@ class EmotionDetector:
     #can edit this as necessary, for example remove disgust and apply softmax as necessary, if delete emotions,
     #adjust the index as necessary, alphabetical order is preserved due to how keras reads in directories
     # idx2emotion = {0:'angry', 1:'disgust', 2:'fear', 3:'happy', 4:'neutral', 5:'sad', 6:'surprise'}
-    idx2emotion = {0:'negative', 1:'negative', 2:'negative', 3:'positive', 4:'neutral', 5:'negative', 6:'positive'}
+    # idx2emotion = {0:'negative', 1:'negative', 2:'negative', 3:'positive', 4:'neutral', 5:'negative', 6:'positive'}
+    # idx2emotion = {0:'negative', 1:'', 2:'negative', 3:'positive', 4:'neutral', 5:'negative', 6:'positive'}
+    idx2emotion = {0:'negative', 1:'neutral', 2:'positive'}
 
 
     # overall_emotion = {'angry':0, 'disgust':0, 'fear':0, 'happy':0, 'neutral':0, 'sad':0, 'surprise':0}
