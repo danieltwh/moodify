@@ -5,8 +5,12 @@ import SentimentScoreToggle from "@/components/SentimentScoreToggle";
 import { useEffect, useRef, useState } from "react";
 import mockInference from "@/_mock/sample_pred.json";
 import { SentimentScores } from "@/app/types";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const Analysis: React.FC<{ params: { slug: string } }> = ({ params }) => {
+  const router = useRouter();
+
   const videoId = params.slug;
   const [transcript, setTranscript] = useState<string>("");
 
@@ -59,7 +63,18 @@ const Analysis: React.FC<{ params: { slug: string } }> = ({ params }) => {
 
   return (
     <div className="space-y-3">
-      <text className="text-2xl font-semibold">{videoTitle}</text>
+      <div className="flex justify-between">
+        <text className="text-2xl font-semibold">{videoTitle}</text>
+        <Button
+          className="w-20"
+          onClick={() => {
+            router.push("/");
+          }}
+        >
+          Back
+        </Button>
+      </div>
+
       <div className="flex justify-around gap-8">
         <video
           controls
