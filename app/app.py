@@ -116,7 +116,7 @@ def upload():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_ext = filename.rsplit(".", 1)[1].lower()
-            filename = f"video.{file_ext}"
+            # filename = f"video.{file_ext}"
 
             video_id = str(uuid.uuid4())
             # print(video_id)
@@ -167,8 +167,7 @@ def upload():
 
             resp = jsonify(status="success")
             return resp
-    
-    
+
     # speech_data = {}
 
     # if "preds"
@@ -183,8 +182,9 @@ def upload():
     # return redirect(url_for("dashboard"))
 
 
-@app.route("/video-metadata", methods=["GET"])
-def video_metadata():
+@app.route("/video-metadata/", methods=["GET"])
+@app.route("/video-metadata/<video_id>", methods=["GET"])
+def video_metadata(video_id=None):
     # if 'username' not in session:
     #     flash("Please log in to access this page.", category="error")
     #     return redirect(url_for("signin"))
@@ -197,9 +197,17 @@ def video_metadata():
 
     videos_dict = [video.__dict__ for video in all_videos]
 
+    videos_dict_sorted = sorted(
+        videos_dict,
+        key=lambda x: x["date_created"],
+        reverse=True,
+    )
     resp = []
 
-    for d in videos_dict:
+    for d in videos_dict_sorted:
+        if video_id and d["video_id"] != video_id:
+            continue
+
         intermediate = {}
         intermediate["id"] = d["video_id"]
         intermediate["title"] = d["video_name"]
@@ -208,8 +216,12 @@ def video_metadata():
 
         if d["predictions"] != "":
             predictions = json.loads(d["predictions"])
-            intermediate["speechSentiment"] = predictions["aggregates"]["speech_data"]
-            intermediate["expressionSentiment"] = predictions["aggregates"]["face_emotion"]
+            intermediate["speechSentiment"] = predictions["aggregates"]["speech_data"][
+                "preds_str"
+            ]
+            intermediate["expressionSentiment"] = predictions["aggregates"][
+                "face_emotion"
+            ]["preds_str"]
         else:
             intermediate["speechSentiment"] = "-"
             intermediate["expressionSentiment"] = "-"
@@ -299,6 +311,21 @@ def stream(video_id):
 
     if not video_details:
         return Response("Video id not found.", status=404)
+
+    video_name = video_details.video_name
+
+    video_name_without_ext, file_ext = video_name.split(".")
+
+    video_dir = os.path.join(app.config["UPLOAD_FOLDER"], video_details.video_id)
+
+    path_to_face_box = os.path.join(
+        video_dir, f"{video_name_without_ext}_with_face_box.{file_ext}"
+    )
+
+    if os.path.exists(path_to_face_box):
+        return send_from_directory(
+            video_dir, f"{video_name_without_ext}_with_face_box.{file_ext}"
+        )
 
     return send_from_directory(
         os.path.join(app.config["UPLOAD_FOLDER"], video_details.video_id),

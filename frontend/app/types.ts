@@ -1,10 +1,7 @@
 interface Interp {
-  happy: number;
+  positive: number;
   neutral: number;
-  surprised: number;
-  sad: number;
-  fearful: number;
-  angry: number;
+  negative: number;
 }
 
 export interface SentimentScores {

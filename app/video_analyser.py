@@ -19,6 +19,13 @@ from extensions import init_postgres, open_rabbitmq_connection
 # Load the db modesl
 import models
 
+
+# Test RabbitMQ Connection
+with open_rabbitmq_connection() as channel:
+    method_frame, header_frame, body = channel.basic_get(
+        queue="analyse-video-queue"
+    )
+
 # Load the models
 from src.Mood_detector import face_emotion_detector
 from src import speech_emotion
@@ -36,6 +43,25 @@ logger.addHandler(handler)
 
 UPLOAD_DIR = "uploads"
 
+def min_max_normaliser(value, x_max, x_min):
+    return (value - x_min) / (x_max - x_min)
+
+def normalise(interp):
+    # find min and max values
+    max_x = max(interp.values())
+    min_x = min(interp.values())
+    
+    # normalize each value in the dict
+    for k, v in interp.items():
+        interp[k] = min_max_normaliser(v, max_x, min_x)
+    return interp
+
+def normalise_batch(interps):
+    for idx in range(len(interps)):
+        interps[idx] = normalise(interps[idx])
+    return interps
+
+
 
 async def analyse_video(video_id, video_name):
     path = os.path.join(UPLOAD_DIR, video_id, video_name)
@@ -48,6 +74,11 @@ async def analyse_video(video_id, video_name):
     print("here: analyse video")
     return preds, interps
     # return None, None
+
+async def face_box_video(video_id, video_name):
+    face_detection_model.draw_face_box_on_video(video_id, video_name)
+    print("here: face box")
+
 
 
 async def analyse_speech(path):
@@ -71,9 +102,13 @@ async def main():
                 queue="analyse-video-queue"
             )
 
+            
+
             if method_frame != None and method_frame.NAME == "Basic.GetOk":
                 # print(method_frame)
-
+                
+                # Acknowledge the job first
+                channel.basic_ack(delivery_tag=method_frame.delivery_tag)
                 try:
                     with init_postgres() as postgres:
                         data = json.loads(body)
@@ -96,6 +131,7 @@ async def main():
                         # Process Video
                         print(video_id)
 
+                        
                         task_ls = []
 
                         if os.path.isdir(os.path.join(UPLOAD_DIR, video_id, "img")):
@@ -115,6 +151,10 @@ async def main():
                             )
                         )
 
+                        task_ls.append(asyncio.create_task(
+                            face_box_video(video_id, video_name)
+                        ))
+
                         # Retrieve the results
                         results = await asyncio.gather(*task_ls)
 
@@ -133,6 +173,14 @@ async def main():
                         if face_preds and face_interps:
                             overall_face_preds = max(set(face_preds), key=face_preds.count)
                             overall_face_interps = {k: sum(d[k] for d in face_interps) / len(face_interps) for k in face_interps[0]}
+
+
+                        # Normalise
+                        speech_interps = normalise_batch(speech_interps)
+                        # face_interps = normalise_batch(face_interps)
+
+                        overall_speech_interps = normalise(overall_speech_interps)
+                        # overall_face_interps = normalise(overall_face_interps)    
 
                         body = {
                             "aggregates": {
@@ -165,7 +213,7 @@ async def main():
                         #      "abc": 2
                         # }
                         # Update video details
-                        video.predictions = json.dumps(body, default=int)
+                        video.predictions = json.dumps(body, default=float)
                         video.video_status = "completed"
                         # video.predictions = "abc"
                         # video.predictions = 'abc'
@@ -175,7 +223,7 @@ async def main():
 
                         print("HERE 3")
                     
-                    channel.basic_ack(delivery_tag=method_frame.delivery_tag)
+                    
                     print("Done", video_id, video_name)
                     
 
@@ -186,9 +234,10 @@ async def main():
                     logger.error(f"Failed to process message: {body}")
                     logger.exception(err)
 
-                    # channel.basic_publish(exchange="amq.direct", routing_key="analyse-video-queue",
-                    #     body = body
-                    # )
+                    # Requeue the job
+                    channel.basic_publish(exchange="amq.direct", routing_key="analyse-video-queue",
+                        body = body
+                    )
 
             else:
                 logger.info("No message")

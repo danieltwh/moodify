@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
         <div className="flex min-h-screen flex-col space-y-6 items-center text-center p-10 py-4 container mx-auto w-3/4">
           {children}
         </div>
+        <Toaster />
       </body>
     </html>
   );
