@@ -197,10 +197,14 @@ def video_metadata(video_id=None):
 
     videos_dict = [video.__dict__ for video in all_videos]
 
+    videos_dict_sorted = sorted(
+        videos_dict,
+        key=lambda x: x["date_created"],
+        reverse=True,
+    )
     resp = []
 
-    for d in videos_dict:
-
+    for d in videos_dict_sorted:
         if video_id and d["video_id"] != video_id:
             continue
 
@@ -310,18 +314,18 @@ def stream(video_id):
 
     video_name = video_details.video_name
 
-    video_name_without_ext, file_ext = video_name.split('.')
+    video_name_without_ext, file_ext = video_name.split(".")
 
     video_dir = os.path.join(app.config["UPLOAD_FOLDER"], video_details.video_id)
 
-    path_to_face_box = os.path.join(video_dir, f"{video_name_without_ext}_with_face_box.{file_ext}")
+    path_to_face_box = os.path.join(
+        video_dir, f"{video_name_without_ext}_with_face_box.{file_ext}"
+    )
 
     if os.path.exists(path_to_face_box):
         return send_from_directory(
-            video_dir,
-             f"{video_name_without_ext}_with_face_box.{file_ext}"
+            video_dir, f"{video_name_without_ext}_with_face_box.{file_ext}"
         )
-
 
     return send_from_directory(
         os.path.join(app.config["UPLOAD_FOLDER"], video_details.video_id),
