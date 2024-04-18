@@ -33,18 +33,41 @@ model1 = AutoModelForAudioClassification.from_pretrained("r-f/wav2vec-english-sp
 #         7: "surprised"
 #     }
 
+# id2label = {
+#         0: "negative",
+#         1: "neutral",
+#         2: "negative",
+#         3: "negative",
+#         4: "positive",
+#         5: "neutral",
+#         6: "negative",
+#         7: "positive"
+#     }
+
 id2label = {
-        0: "negative",
-        1: "neutral",
-        2: "negative",
-        3: "negative",
+    0: "negative",
+    1: "neutral",
+    2: "positive"
+}
+
+# label2id = {y:x for x, y in id2label.items()}
+label2id = {
+        "angry": 0,
+        "neutral": 1,
+        "happy": 2,
+}
+
+label2newlabel = {
+        "angry": "negative",
+        "neutral": "neutral",
+        "happy": "positive",
+}
+
+oldid2newlabel = {
+        0: "negative",        
         4: "positive",
         5: "neutral",
-        6: "negative",
-        7: "positive"
-    }
-
-label2id = {y:x for x, y in id2label.items()}
+}
 
 # id2newid = {
 #     0: 1
@@ -83,9 +106,21 @@ def predict_emotion(wave_data):
     result = model1.forward(input.input_values.float())
     # making sense of the result 
 
-    interp = dict(zip(id2label.values(), list(round(float(i),4) for i in result[0][0])))
+    # interp = dict(zip(id2label.values(), list(round(float(i),4) for i in result[0][0])))
 
-    pred = np.argmax(result[0][0].detach().numpy())
+    interp = {"negative": 0.0, "neutral": 0.0, "positive": 0.0}
+    
+    max_idx = -1
+    max_val = -1.0
+    for idx, val in enumerate(result[0][0].detach().numpy()):
+        if idx in oldid2newlabel:
+            interp[oldid2newlabel[idx]] += val
+            if val > max_val:
+                max_idx = idx
+                max_val = val
+
+    # pred = np.argmax(result[0][0].detach().numpy())
+    pred = oldid2newlabel[max_idx]
     return pred, interp
 
 def analyse_audio(audio):
@@ -99,11 +134,17 @@ def analyse_audio(audio):
         if len(chunk) < 1000:
             continue
         pred, interp = predict_emotion(np.array(chunk.get_array_of_samples()))
+
+        
+
         # pred, interp = predict_emotion(chunk)
+        # preds.append(pred)
+                    
         preds.append(pred)
         interps.append(interp)
 
-    preds_str = list(map(lambda x: id2label[x], preds))
+    # preds_str = list(map(lambda x: id2label[x], preds))
+    preds_str = preds
     return preds_str, interps
 
 def analyse_audio_filename(filename):
@@ -151,7 +192,7 @@ if __name__ == "__main__":
     print(preds)
     print(interps)
 
-    print([id2label[pred_id] for pred_id in preds])
+    # print([id2label[pred_id] for pred_id in preds])
     
     
 
