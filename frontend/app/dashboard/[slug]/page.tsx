@@ -28,6 +28,7 @@ const Analysis: React.FC<{ params: { slug: string } }> = ({ params }) => {
   const [viewAggregatedScores, setViewAggregatedScores] =
     useState<boolean>(true);
 
+  const [videoTitle, setVideoTitle] = useState<string>("");
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -36,12 +37,18 @@ const Analysis: React.FC<{ params: { slug: string } }> = ({ params }) => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         setTranscript(data.text);
         setSpeechSentiment(data.speech_data);
         setFacialSentiment(data.face_emotion);
         setAggregatedSpeechSentiment(data.aggregates.speech_data);
         setAggregatedFacialSentiment(data.aggregates.face_emotion);
+      });
+    fetch(`http://127.0.0.1:5000/video-metadata/${videoId}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setVideoTitle(data[0].title);
       });
     // setTranscript(mockInference.text);
     // setSpeechSentiment(mockInference.speech_data);
@@ -52,7 +59,7 @@ const Analysis: React.FC<{ params: { slug: string } }> = ({ params }) => {
 
   return (
     <div className="space-y-3">
-      <text className="text-2xl font-semibold">Video X</text>
+      <text className="text-2xl font-semibold">{videoTitle}</text>
       <div className="flex justify-around gap-8">
         <video
           controls

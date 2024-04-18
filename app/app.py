@@ -182,8 +182,9 @@ def upload():
     # return redirect(url_for("dashboard"))
 
 
-@app.route("/video-metadata", methods=["GET"])
-def video_metadata():
+@app.route("/video-metadata/", methods=["GET"])
+@app.route("/video-metadata/<video_id>", methods=["GET"])
+def video_metadata(video_id=None):
     # if 'username' not in session:
     #     flash("Please log in to access this page.", category="error")
     #     return redirect(url_for("signin"))
@@ -199,6 +200,10 @@ def video_metadata():
     resp = []
 
     for d in videos_dict:
+
+        if video_id and d["video_id"] != video_id:
+            continue
+
         intermediate = {}
         intermediate["id"] = d["video_id"]
         intermediate["title"] = d["video_name"]
