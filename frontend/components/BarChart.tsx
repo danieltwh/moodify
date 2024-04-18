@@ -35,7 +35,15 @@ const BarChart: React.FC<{
     <div className="flex flex-col w-full gap-2">
       <div className="flex h-8">
         <text className="text-lg w-1/3 bg-lightPurple">{label}</text>
-        <text className="text-lg w-2/3 bg-white ">{outcome}</text>
+        {outcome == "neutral" && (
+          <text className="text-lg w-2/3 bg-white">{outcome}</text>
+        )}
+        {outcome == "positive" && (
+          <text className="text-lg w-2/3 bg-[#BDE7BD] ">{outcome}</text>
+        )}
+        {outcome == "negative" && (
+          <text className="text-lg w-2/3 bg-[#FFB6B3]">{outcome}</text>
+        )}
       </div>
 
       <div className="flex flex-col gap-2 w-full">
