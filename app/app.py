@@ -167,8 +167,7 @@ def upload():
 
             resp = jsonify(status="success")
             return resp
-    
-    
+
     # speech_data = {}
 
     # if "preds"
@@ -208,8 +207,12 @@ def video_metadata():
 
         if d["predictions"] != "":
             predictions = json.loads(d["predictions"])
-            intermediate["speechSentiment"] = predictions["aggregates"]["speech_data"]['preds_str'][0]
-            intermediate["expressionSentiment"] = predictions["aggregates"]["face_emotion"]['preds_str'][0]
+            intermediate["speechSentiment"] = predictions["aggregates"]["speech_data"][
+                "preds_str"
+            ]
+            intermediate["expressionSentiment"] = predictions["aggregates"][
+                "face_emotion"
+            ]["preds_str"]
         else:
             intermediate["speechSentiment"] = "-"
             intermediate["expressionSentiment"] = "-"
