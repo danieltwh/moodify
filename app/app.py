@@ -308,6 +308,21 @@ def stream(video_id):
     if not video_details:
         return Response("Video id not found.", status=404)
 
+    video_name = video_details.video_name
+
+    video_name_without_ext, file_ext = video_name.split('.')
+
+    video_dir = os.path.join(app.config["UPLOAD_FOLDER"], video_details.video_id)
+
+    path_to_face_box = os.path.join(video_dir, f"{video_name_without_ext}_with_face_box.{file_ext}")
+
+    if os.path.exists(path_to_face_box):
+        return send_from_directory(
+            video_dir,
+             f"{video_name_without_ext}_with_face_box.{file_ext}"
+        )
+
+
     return send_from_directory(
         os.path.join(app.config["UPLOAD_FOLDER"], video_details.video_id),
         video_details.video_name,

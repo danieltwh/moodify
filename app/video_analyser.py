@@ -75,6 +75,11 @@ async def analyse_video(video_id, video_name):
     return preds, interps
     # return None, None
 
+async def face_box_video(video_id, video_name):
+    face_detection_model.draw_face_box_on_video(video_id, video_name)
+    print("here: face box")
+
+
 
 async def analyse_speech(path):
     preds, interps = speech_emotion.analyse_audio_path(path)
@@ -126,6 +131,7 @@ async def main():
                         # Process Video
                         print(video_id)
 
+                        
                         task_ls = []
 
                         if os.path.isdir(os.path.join(UPLOAD_DIR, video_id, "img")):
@@ -144,6 +150,10 @@ async def main():
                                 speech_to_text(video_id, video_name)
                             )
                         )
+
+                        task_ls.append(asyncio.create_task(
+                            face_box_video(video_id, video_name)
+                        ))
 
                         # Retrieve the results
                         results = await asyncio.gather(*task_ls)
