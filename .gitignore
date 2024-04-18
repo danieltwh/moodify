@@ -9,6 +9,10 @@
 /app/uploads/*
 !/app/uploads/test/
 !/app/uploads/c8dd5351-0653-4929-a177-f8a23892d88d/
+!/app/uploads/72955137-7e51-46ea-a4fe-f38c1d582ebb/
+!/app/uploads/ce119351-5b30-495a-ae7b-923fa8be4c01/
+!/app/uploads/2d5d464b-1d77-4cf4-addc-500432819863/
+!/app/uploads/cdfd2ac2-9b46-49e2-b03b-cbf16cf045ea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

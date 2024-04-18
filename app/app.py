@@ -144,6 +144,8 @@ def upload():
             postgres.add(new_video)
             postgres.commit()
 
+            postgres.close()
+
             video_msg_dict = {
                 "video_id": video_id,
             }
@@ -226,6 +228,8 @@ def video_metadata(video_id=None):
             intermediate["speechSentiment"] = "-"
             intermediate["expressionSentiment"] = "-"
         resp.append(intermediate)
+    # print(video_id, resp)
+    postgress.close()
 
     # resp = [
     #     {
@@ -245,39 +249,8 @@ def video_predictions(id):
     postgress = init_postgres()
 
     video = postgress.query(models.Videos).get(id).__dict__
+    postgress.close()
     return jsonify(json.loads(video["predictions"]))
-
-
-# @app.route("/reset", methods=["GET", "POST"])
-# def reset():
-#     if "user" not in session:
-#         return redirect(url_for("signin"))
-
-#     if request.method == "POST":
-#         # If directory exist, then delete
-#         user_dir_img = os.path.join(UPLOAD_DIR, session['user'], 'img')
-#         if os.path.exists(user_dir_img):
-#             # os.rmdir(user_dir_img)
-#             shutil.rmtree(user_dir_img)
-
-#         if "video_file" in session:
-#             del session['video_file']
-#         if 'speech_data' in session:
-#             del session['speech_data']
-
-#     # speech_data = {}
-
-#     # if "preds"
-#     # speech_data = {
-#     #     "preds_str": session["preds_str"],
-#     #     "interps": session["interps"],
-#     #     "curr_pred": session['curr_pred'],
-#     #     "curr_interps": session['curr_interps']
-#     # }
-
-
-#     # return render_template("dashboard.html")
-#     return redirect(url_for("dashboard"))
 
 
 @app.route("/dashboard", methods=["GET"])
@@ -308,6 +281,8 @@ def stream(video_id):
     video_details = (
         postgres.query(models.Videos).filter(models.Videos.video_id == video_id).first()
     )
+
+    postgres.close()
 
     if not video_details:
         return Response("Video id not found.", status=404)
