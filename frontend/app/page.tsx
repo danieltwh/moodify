@@ -13,7 +13,7 @@ const Home: React.FC = () => {
     <div className="space-y-6 w-full pb-6">
       <text className="text-5xl font-medium">Moodify</text>
       <p className="text-darkPurple text-xl">
-        Find out how your investors feel. Uncover hidden insights
+        Find out how your audience feel. Uncover hidden insights
         <br></br>
         from their voices and expressions.
       </p>
