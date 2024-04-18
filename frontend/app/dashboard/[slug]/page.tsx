@@ -108,7 +108,11 @@ const Analysis: React.FC<{ params: { slug: string } }> = ({ params }) => {
           videoTime={viewAggregatedScores ? 0 : videoTime}
         />
       </div>
-      <p className="w-full text-darkPurple">{transcript}</p>
+      <br></br>
+      <p className="w-full text-darkPurple">
+        <text className="text-purple">Transcript: </text>
+        {transcript}
+      </p>
     </div>
   );
 };
