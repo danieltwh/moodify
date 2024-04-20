@@ -7,7 +7,6 @@ from flask import (
     request,
     redirect,
     url_for,
-    flash,
     session,
     send_from_directory,
     jsonify,
@@ -21,7 +20,6 @@ import datetime
 # from src.face_detection import face_detection_model
 # from src.speech_to_text import speech_to_text_model
 
-# from .CV.eye_tracker import *
 
 from extensions import (
     open_rabbitmq_connection,
@@ -69,38 +67,10 @@ def allowed_file(filename):
     )
 
 
-# @app.route("/signin", methods=["GET", "POST"])
-# def signin():
-#     if request.method == "POST":
-#         username = request.form.get("username")
-#         password = request.form.get("password")
-
-#         valid_username = "test"
-#         valid_password = "AIPentaHack"
-
-#         if username == valid_username:
-#             session['user'] = username
-
-#             user_dir = os.path.join(UPLOAD_DIR, username)
-#             # Create directory for user
-#             if not os.path.exists(user_dir):
-#                 os.mkdir(user_dir)
-
-#             return redirect(url_for("dashboard"))
-#         else:
-#             flash("Invalid username or password.", category="error")
-
-#     return render_template("signin.html")
-
 
 @app.route("/upload", methods=["POST"])
 def upload():
-    # if 'username' not in session:
-    #     flash("Please log in to access this page.", category="error")
-    #     return redirect(url_for("signin"))
 
-    # if "user" not in session:
-    #     return redirect(url_for("signin"))
 
     if request.method == "POST":
         if "file" not in request.files:
@@ -126,8 +96,7 @@ def upload():
                 os.mkdir(dir_path)
 
             file.save(os.path.join(dir_path, filename))
-            # session['video_file'] = filename
-            # flash("Video uploaded successfully!", category="success")
+
 
             postgres = init_postgres()
 
@@ -170,29 +139,11 @@ def upload():
             resp = jsonify(status="success")
             return resp
 
-    # speech_data = {}
-
-    # if "preds"
-    # speech_data = {
-    #     "preds_str": session["preds_str"],
-    #     "interps": session["interps"],
-    #     "curr_pred": session['curr_pred'],
-    #     "curr_interps": session['curr_interps']
-    # }
-
-    # return render_template("dashboard.html")
-    # return redirect(url_for("dashboard"))
 
 
 @app.route("/video-metadata/", methods=["GET"])
 @app.route("/video-metadata/<video_id>", methods=["GET"])
 def video_metadata(video_id=None):
-    # if 'username' not in session:
-    #     flash("Please log in to access this page.", category="error")
-    #     return redirect(url_for("signin"))
-
-    # if "user" not in session:
-    #     return redirect(url_for("signin"))
     postgress = init_postgres()
 
     all_videos = postgress.query(models.Videos).all()
@@ -230,16 +181,6 @@ def video_metadata(video_id=None):
         resp.append(intermediate)
     # print(video_id, resp)
     postgress.close()
-
-    # resp = [
-    #     {
-    #         "expressionSentiment": "fearful",
-    #         "speechSentiment": "fearful",
-    #         "status": "completed",
-    #         "title": "video.mp4",
-    #         "uploadDate": "Mon, 13 Mar 2023 20:46:43 GMT",
-    #     },
-    # ]
 
     return jsonify(resp)
 
@@ -306,28 +247,6 @@ def stream(video_id):
         os.path.join(app.config["UPLOAD_FOLDER"], video_details.video_id),
         video_details.video_name,
     )
-
-
-@app.route("/slider_update", methods=["POST", "GET"])
-def slider():
-    if request.method == "POST":
-        received_data = request.get_json()
-        idx = int(received_data["idx"])
-        # print(idx, session["preds_str"])
-        curr_pred = session["preds_str"][idx]
-        curr_interps = session["interps"][idx]
-
-        # print(curr_pred, curr_interps)
-        body = {"pred": curr_pred, "data": curr_interps}
-        return jsonify(body)
-        # return body
-
-
-# @app.route("/logout")
-# def logout():
-#     session.pop('username', None)
-#     flash("Logged out successfully.", category="success")
-#     return redirect(url_for("signin"))
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

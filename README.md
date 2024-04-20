@@ -54,13 +54,40 @@
     pip install -r requirements.txt
     ```
 ## Usage
-1. Enter the app directory
+1. Start the PostgreSQL and RabbitMQ docker. In the main directory of the repository, run
+    ```bash
+    docker-compose up -d 
+    ```
+
+2. In another terminal, activate the virtaul environment and start the Moodify backend application
     ```bash
     cd app
     ```
-2. Start the Moodify application
+    ```bash
+    conda activate moodify
+    ```
     ```bash
     python main.py
+    ```
+3. In another terminal, install and start the Moodify frontend application
+    ```bash
+    cd frontend
+    ```
+    ```bash
+    npm i
+    ```
+    ```bash
+    npm run dev
+    ```
+4. In another terminal, activate the virtual environment and start the Moodify video_analyser
+    ```bash
+    cd app
+    ```
+    ```bash
+    conda activate moodify
+    ```
+    ```bash
+    python video_analyser.py
     ```
 
 ## Docker
@@ -81,7 +108,7 @@
 
 4. To shutdown the application, run the following command.
     ```bash
-    docker-compose down
+    docker-compose down -v
     ```
 
 <!-- 3. Backend API available at `localhost:5050` -->
