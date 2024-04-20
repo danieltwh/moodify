@@ -37,9 +37,9 @@
 │   │   └── speech_to_text  <- for transcription service
 │   └── sql                 <- contains sql scripts
 ├── data                    <- contains datasets for training and testing
-│   ├── Faces updated       <- contains the latest facial data for training and testing the model
+│   ├── Webcam Images       <- contains the latest facial data for training and testing the model
+│   ├── Webcam Images (Augmented) <- contains augmented facial data 
 │   ├── sample_videos       <- contains sample data for testing the application
-│   └── xxx
 ├── frontend                <- Moodify web app (frontend)
 │   ├── app                 <- main frontend app
 │   └── components          <- frontend components
