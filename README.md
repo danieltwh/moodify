@@ -1,20 +1,20 @@
 <div align="center">
   <p>
-    <a href="https://github.com/danieltwh/moodify/edit/daniel/README.md#moodify" target="_blank">
+    <a href="https://github.com/danieltwh/moodify/" target="_blank">
       <img width="65%" src="https://raw.githubusercontent.com/danieltwh/moodify/main/frontend/public/logo.png">
     </a>
   </p>
 </div>
-<a href="https://github.com/danieltwh/moodify/README.md#moodify" target="_blank">Moodify</a> is a machine learning powered solution that transforms subtle facial expressions and vocal nuances into clear, actionable insights, enabling you to gauge and respond effectively to your audience sentiments during presentations or helping you analyse your pitch for improvements before your high-stakes meetings. 
+<a href="https://github.com/danieltwh/moodify/" target="_blank">Moodify</a> is a machine learning powered solution that transforms subtle facial expressions and vocal nuances into clear, actionable insights, enabling you to gauge and respond effectively to your audience sentiments during presentations or helping you analyse your pitch for improvements before your high-stakes meetings. 
 <br></br>
-Please check out the latest application at <a href="https://github.com/danieltwh/moodify/README.md#moodify">https://github.com/danieltwh/moodify</a> and start gaining insights into your meetings.
+Please check out the latest application at <a href="https://github.com/danieltwh/moodify/">https://github.com/danieltwh/moodify</a> and start gaining insights into your meetings.
 <br></br>
 
 # <div align="center"> Moodify 😊😐☹️ </div>
 ## Table of Contents
 - [Moodify](#moodify)
   - [Table of Contents](#table-of-contents)
-  - [Requirements](#Requirements)
+  - [Requirements](#requirements)
   - [Project Structure](#project-structure)
   - [Notes](#notes)
   <!-- - [Installation](#installation-/-usage) -->
