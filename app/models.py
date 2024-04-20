@@ -30,15 +30,3 @@ class Videos(PostgresBase):
         self.video_name = video_name
         self.video_status = "processing"
         self.predictions = ""
-    
-    def serialize(self):
-        return {
-            "video_id": self.id,
-            "firstName": self.firstname,
-            "lastName": self.lastname,
-            "email": self.email,
-            "salt": self.salt, 
-            "password": self.password,
-            "role": self.role,
-            "date_created": self.date_created,
-        }
