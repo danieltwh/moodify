@@ -1,40 +1,7 @@
-# from flask_sqlalchemy import SQLAlchemy
-# from flask import Flask, request, jsonify, session, flash
-# from flask_login import LoginManager
-# from flask_cors import CORS
-
-# PostgreSQL
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
 import pika
-
-import os
 from contextlib import contextmanager
-
-# ENV = os.environ.get('ENV')
-
-# db = SQLAlchemy()
-# login_manager = LoginManager()
-# app = Flask(__name__)
-
-# if ENV == "DEV":
-#     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:password@localhost:5455/MLOps_Suite'
-# else:
-#     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:password@db:5455/MLOps_Suite'
-
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.config['SQLALCHEMY_ECHO'] = False
-# app.config['SECRET_KEY'] = 'secret'
-# app.app_context().push()
-# db.init_app(app)
-# login_manager.init_app(app)
-# CORS(app)
-
-# if ENV == "DEV":
-#     rabbitmq_url = 'amqp://user:password@localhost'
-# else:
-#     rabbitmq_url = 'amqp://user:password@rabbitmq'
 
 postgres_path = "postgresql://user:password@localhost:5455/moodify"
 
@@ -51,8 +18,6 @@ def init_postgres():
     finally:
         postgres.close()
 
-
-
 # RabitMQ
 rabbitmq_url = 'amqp://user:password@localhost'
 
@@ -60,11 +25,6 @@ port = 	5672
 vhost = '/%2F'
 
 rabbitmq_url_param = pika.URLParameters(f"{rabbitmq_url}:{port}{vhost}")
-# rabbitmq_client = pika.BlockingConnection(
-#         url_param
-#         )
-
-
 
 
 @contextmanager
@@ -94,10 +54,3 @@ def sql_from_dict(dict, model_instance):
     for c in model_instance.__table__.columns:
         setattr(model_instance, c.name, dict[c.name])
     
-
-
-# CORS(app, resources={
-#     r"/*":{
-#         "origins":"*"
-#     }
-# })
