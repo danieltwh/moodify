@@ -75,10 +75,8 @@ and [Usage](#usage) sections.
     ```bash
     pip install -r requirements.txt
     ```
-    - If you are using Mac, it would best to switch to Windows. Nonetheless, if you really want to use Mac, you can run the following. However, we do not gaurantee that the app will run without errors if you choose to run this on Mac due to Tenorflow incompatbilities on Apple silicon.
-   ```bash
-    pip install -r requirements_mac.txt
-    ```
+    - If you are using Mac, please switch to Windows. We do not gaurantee that the app will run without errors if you choose to run this on Mac due to Tensorflow incompatbilities on Apple silicon. 
+
    
 ## Additional Setup Instructions
 As the ML model files are too big to be committed to Github, please follow the instructions below to obtain the model files before running the application:
