@@ -43,8 +43,15 @@ const UploadsTable: React.FC = () => {
           return (
             <TableRow key={idx}>
               <TableCell
-                className="bg-lightPurple hover:cursor-pointer"
+                className={
+                  pastUpload.status == "completed"
+                    ? "bg-lightPurple hover:cursor-pointer"
+                    : "bg-lightPurple"
+                }
                 onClick={() => {
+                  if (pastUpload.status != "completed") {
+                    return;
+                  }
                   router.push(`/dashboard/${pastUpload.id}`);
                 }}
               >
