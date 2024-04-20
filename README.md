@@ -7,6 +7,7 @@
   - [Notes](#notes)
   <!-- - [Installation](#installation-/-usage) -->
   - [Installation](#installation)
+  - [Additional Setup Instructions](#additional-setup-instructions)
   - [Usage](#usage)
   - [Docker](#docker)
 
@@ -14,59 +15,124 @@
 1. Python 3.9.18
 2. Docker installed on your system
 3. Docker-compose installed on your system
+4. FFmpeg
+    - To check if FFmpeg is install, run the following in terminal
+    ```bash
+    ffmpeg -version
+    ```
+    If you see a version number, that means ffmpeg is installed. Otherwise, please follow the next step to install it.
+    - Download and install FFmpeg from [FFmpeg](https://ffmpeg.org/download.html)
+      - For windows, you may find a guide on [PhoenixNap](https://phoenixnap.com/kb/ffmpeg-windows)
 
 ## Project Structure
 ```
 .
-├── app                     <- Moodify web app
+├── app                     <- Moodify web app (backend)
 │   ├── Dockerfile          <- for dockerising app
 │   ├── main.py
 │   ├── src
-│   │   ├── face_emotion    <- for detecting emotions from facial expression
+│   │   ├── face_detection  <- for detecting faces in videos
+│   │   ├── Mood_detector   <- for detecting emotions from facial expression
 │   │   ├── speech_emotion  <- for detecting emotions in speech 
-│   │   └── XXX
+│   │   └── speech_to_text  <- for transcription service
 │   └── sql                 <- contains sql scripts
 ├── data                    <- contains datasets for training and testing
-│   ├── facial_emotion_data
-│   ├── sample_videos
+│   ├── Faces updated       <- contains the latest facial data for training and testing the model
+│   ├── sample_videos       <- contains sample data for testing the application
 │   └── xxx
+├── frontend                <- Moodify web app (frontend)
+│   ├── app                 <- main frontend app
+│   └── components          <- frontend components
 ├── notebooks
-│   ├── speech_emotion      
+│   ├── Classical Learning  <- notebooks for training classical ML for facial sentiment prediction
+│   ├── Neural Networks     <- notebooks for training classical ML for facial sentiment prediction
+│   ├── speech_emotion      <- notebooks for testing speech emotion model
+│   ├── data_augmentation   <- notebooks for data augmentation of images data collected
 │   └── XXX
+├── postgres
+│   ├── create_tables.sql   <- SQL file for creating the PostgreSQL tables
+│   └── insert_values.sql   <- SQL file for inserting the pre-loaded data in PostgreSQL 
 ├── requirments.txt         <- required Python packages
 ├── xxx
-└── docker-compose          <- docker compose file for MedWatch
+└── docker-compose          <- docker compose file for Moodify
 ```
 
 ## Notes
+To use the Moodify application, please follow the instructions in [Installation](#installation), [Additional Setup Instructions](#additional-setup-instructions)
+and [Usage](#usage) sections.
 
 ## Installation
 1. Create virtual environment
     ```bash
-    conda create -n moodify python=3.9.18
+    conda create -n moodify python=3.10.7
     ```
 2. Activate the virutal environment
     ```bash
     conda activate moodify
     ```
 3. Install required packages
+    - If you are using Windows, run  
     ```bash
     pip install -r requirements.txt
     ```
+    - If you are using Mac, please switch to Windows. We do not gaurantee that the app will run without errors if you choose to run this on Mac due to Tensorflow incompatbilities on Apple silicon. 
+
+   
+## Additional Setup Instructions
+As the ML model files are too big to be committed to Github, please follow the instructions below to obtain the model files before running the application:
+1. Go to [Moodify Google Drive](https://drive.google.com/drive/folders/1i5fGPW_7CUtVyNmIXWhzFma4mWEo8MYH?usp=sharing) to access all the model files
+2. Download the Face Detection weights:
+    - In the [Moodify Google Drive](https://drive.google.com/drive/folders/1i5fGPW_7CUtVyNmIXWhzFma4mWEo8MYH?usp=sharing), go to the `face_detection` folder and download the `yolov8n-face.pt` file into the `app/src/face_detection` directory
+3. Download the Mood Detector model:
+    - In the [Moodify Google Drive](https://drive.google.com/drive/folders/1i5fGPW_7CUtVyNmIXWhzFma4mWEo8MYH?usp=sharing), go to the `Mood_detector` folder and download the `trained_emotion.keras` file into the `app/src/Mood_detector` directory
+
 ## Usage
-1. Enter the app directory
+1. Start the PostgreSQL and RabbitMQ docker. In the root directory of the repository, run the following in terminal:
+    ```bash
+    docker-compose up -d 
+    ```
+
+2. In another terminal, activate the virtaul environment and start the Moodify backend application
     ```bash
     cd app
     ```
-2. Start the Moodify application
+    ```bash
+    conda activate moodify
+    ```
     ```bash
     python main.py
     ```
+3. In another terminal, install and start the Moodify frontend application
+    ```bash
+    cd frontend
+    ```
+    ```bash
+    npm i
+    ```
+    ```bash
+    npm run dev
+    ```
+4. In another terminal, activate the virtual environment and start the Moodify video_analyser
+    ```bash
+    cd app
+    ```
+    ```bash
+    conda activate moodify
+    ```
+    ```bash
+    python video_analyser.py
+    ```
+    If the vdeo_analyser.py stops running / face issues, repeat this step to re-run the script in the terminal.
+5. Access the Moodify application at `http://localhost:3000/`
+    - Open your webbrowser
+    - Enter the following url: `http://localhost:3000/`
+    - You may use the videos found in `data/sample_videos` to test the application
 
 ## Docker
-1. Activate the virutal environment
+Below are the details and instructions specific for the docker containers set-up. You need not run this to use the application.
+1. Start the docker containers. In the root directory of the repository, run the following in terminal:
     ```bash
-    docker-compose up -d --build 
+    docker-compose up -d
     ```
 
 2. Connect to Postgres on PGAdmin
@@ -81,11 +147,7 @@
 
 4. To shutdown the application, run the following command.
     ```bash
-    docker-compose down
+    docker-compose down -v
     ```
-
-<!-- 3. Backend API available at `localhost:5050` -->
-
-<!-- 4. Frontend available at `localhost:80` -->
 
 

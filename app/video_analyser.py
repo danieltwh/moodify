@@ -96,6 +96,9 @@ async def speech_to_text(video_id, video_name):
 
 
 async def main():
+    method_frame = None
+    header_frame = None
+    body = None
     while True:
         with open_rabbitmq_connection() as channel:
             method_frame, header_frame, body = channel.basic_get(
@@ -109,138 +112,150 @@ async def main():
                 
                 # Acknowledge the job first
                 channel.basic_ack(delivery_tag=method_frame.delivery_tag)
-                try:
-                    with init_postgres() as postgres:
-                        data = json.loads(body)
+            
+        if method_frame != None and method_frame.NAME == "Basic.GetOk":
+            try:
+                with init_postgres() as postgres:
+                    data = json.loads(body)
 
-                        video_id = data["video_id"]
+                    video_id = data["video_id"]
 
-                        video = (
-                            postgres.query(models.Videos)
-                            .filter(models.Videos.video_id == video_id)
-                            .first()
+                    video = (
+                        postgres.query(models.Videos)
+                        .filter(models.Videos.video_id == video_id)
+                        .first()
+                    )
+
+                    if not video:
+                        logger.error(f"Failed: Video {video_id} not found in DB")
+                        break
+
+                    video_name = video.video_name
+
+                    path = os.path.join(UPLOAD_DIR, video_id, video_name)
+                    # Process Video
+                    print(video_id)
+
+                    
+                    task_ls = []
+
+                    if os.path.isdir(os.path.join(UPLOAD_DIR, video_id, "img")):
+                        shutil.rmtree(os.path.join(UPLOAD_DIR, video_id, "img"))
+
+                    task_ls.append(
+                        asyncio.create_task(analyse_video(video_id, video_name))
+                    )
+
+                    task_ls.append(asyncio.create_task(analyse_speech(path)))
+
+                    if os.path.isdir(os.path.join(UPLOAD_DIR, video_id, "txt")):
+                        shutil.rmtree(os.path.join(UPLOAD_DIR, video_id, "txt"))
+                    task_ls.append(
+                        asyncio.create_task(
+                            speech_to_text(video_id, video_name)
                         )
+                    )
 
-                        if not video:
-                            logger.error(f"Failed: Video {video_id} not found in DB")
-                            break
+                    task_ls.append(asyncio.create_task(
+                        face_box_video(video_id, video_name)
+                    ))
+                    
+                    print("Just before results")
+                    # Retrieve the results
+                    results = await asyncio.gather(*task_ls)
 
-                        video_name = video.video_name
+                    speech_preds, speech_interps = results[1]
+                    text = results[2]
+                    face_preds, face_interps = results[0]
 
-                        path = os.path.join(UPLOAD_DIR, video_id, video_name)
-                        # Process Video
-                        print(video_id)
+                    overall_speech_preds = None
+                    overall_speech_interps = None
+                    if speech_preds and speech_interps:
+                        # overall_speech_preds = max(set(speech_preds), key=speech_preds.count)
+                        overall_speech_interps = {k: sum(d[k] for d in speech_interps) / len(speech_interps) for k in speech_interps[0]}
+                        overall_speech_preds = max(overall_speech_interps, key=overall_speech_interps.get)
 
+                    overall_face_preds = None
+                    overall_face_interps = None
+                    if face_preds and face_interps:
+                        # overall_face_preds = max(set(face_preds), key=face_preds.count)
                         
-                        task_ls = []
+                        overall_face_interps = {k: sum(d[k] for d in face_interps) / len(face_interps) for k in face_interps[0]}
 
-                        if os.path.isdir(os.path.join(UPLOAD_DIR, video_id, "img")):
-                            shutil.rmtree(os.path.join(UPLOAD_DIR, video_id, "img"))
-
-                        task_ls.append(
-                            asyncio.create_task(analyse_video(video_id, video_name))
-                        )
-
-                        task_ls.append(asyncio.create_task(analyse_speech(path)))
-
-                        if os.path.isdir(os.path.join(UPLOAD_DIR, video_id, "txt")):
-                            shutil.rmtree(os.path.join(UPLOAD_DIR, video_id, "txt"))
-                        task_ls.append(
-                            asyncio.create_task(
-                                speech_to_text(video_id, video_name)
-                            )
-                        )
-
-                        task_ls.append(asyncio.create_task(
-                            face_box_video(video_id, video_name)
-                        ))
-
-                        # Retrieve the results
-                        results = await asyncio.gather(*task_ls)
-
-                        speech_preds, speech_interps = results[1]
-                        text = results[2]
-                        face_preds, face_interps = results[0]
-
-                        overall_speech_preds = None
-                        overall_speech_interps = None
-                        if speech_preds and speech_interps:
-                            overall_speech_preds = max(set(speech_preds), key=speech_preds.count)
-                            overall_speech_interps = {k: sum(d[k] for d in speech_interps) / len(speech_interps) for k in speech_interps[0]}
-
-                        overall_face_preds = None
-                        overall_face_interps = None
-                        if face_preds and face_interps:
-                            overall_face_preds = max(set(face_preds), key=face_preds.count)
-                            overall_face_interps = {k: sum(d[k] for d in face_interps) / len(face_interps) for k in face_interps[0]}
+                        overall_face_preds = max(overall_face_interps, key=overall_face_interps.get)
 
 
-                        # Normalise
-                        speech_interps = normalise_batch(speech_interps)
-                        # face_interps = normalise_batch(face_interps)
+                    # Normalise
+                    speech_interps = normalise_batch(speech_interps)
+                    # face_interps = normalise_batch(face_interps)
 
-                        overall_speech_interps = normalise(overall_speech_interps)
-                        # overall_face_interps = normalise(overall_face_interps)    
+                    overall_speech_interps = normalise(overall_speech_interps)
+                    # overall_face_interps = normalise(overall_face_interps)    
 
-                        body = {
-                            "aggregates": {
-                                "speech_data": {
-                                    "preds_str": [overall_speech_preds],
-                                    "interps": [overall_speech_interps],
-                                }, 
-                                "face_emotion": {
-                                    "preds_str": [overall_face_preds],
-                                    "interps": [overall_face_interps],
-                                }
-                            },
+                    body = {
+                        "aggregates": {
                             "speech_data": {
-                                "preds_str": speech_preds,
-                                "interps": speech_interps,
-                            },
-                            "text": text,
-                            'face_emotion': {
-                                "preds_str": face_preds, 
-                                "interps": face_interps,
+                                "preds_str": [overall_speech_preds],
+                                "interps": [overall_speech_interps],
+                            }, 
+                            "face_emotion": {
+                                "preds_str": [overall_face_preds],
+                                "interps": [overall_face_interps],
                             }
+                        },
+                        "speech_data": {
+                            "preds_str": speech_preds,
+                            "interps": speech_interps,
+                        },
+                        "text": text,
+                        'face_emotion': {
+                            "preds_str": face_preds, 
+                            "interps": face_interps,
                         }
+                    }
 
-                        
-                        print("HERE 1")
-
-                        print(body)
-
-                        # body = {
-                        #      "abc": 2
-                        # }
-                        # Update video details
-                        video.predictions = json.dumps(body, default=float)
-                        video.video_status = "completed"
-                        # video.predictions = "abc"
-                        # video.predictions = 'abc'
-
-                        print("HERE 2")
-                        postgres.commit()
-
-                        print("HERE 3")
                     
-                    
-                    print("Done", video_id, video_name)
-                    
+                    print("HERE 1")
 
-                except Exception as err:
-                    # print("[ERROR] Failed to process message")
-                    # print(body)
-                    # print(err)
-                    logger.error(f"Failed to process message: {body}")
-                    logger.exception(err)
+                    print(body)
 
+                    # body = {
+                    #      "abc": 2
+                    # }
+                    # Update video details
+                    video.predictions = json.dumps(body, default=float)
+                    video.video_status = "completed"
+                    # video.predictions = "abc"
+                    # video.predictions = 'abc'
+
+                    print("HERE 2")
+                    postgres.commit()
+
+                    print("HERE 3")
+                
+                
+                print("Done", video_id, video_name)
+                
+                # Reset
+                method_frame = None
+                header_frame = None
+                body = None
+
+            except Exception as err:
+                # print("[ERROR] Failed to process message")
+                # print(body)
+                # print(err)
+                logger.error(f"Failed to process message: {body}")
+                logger.exception(err)
+
+                with open_rabbitmq_connection() as channel:
                     # Requeue the job
                     channel.basic_publish(exchange="amq.direct", routing_key="analyse-video-queue",
                         body = body
                     )
 
-            else:
-                logger.info("No message")
+        else:
+            logger.info("No message")
         time.sleep(3)
 
 

@@ -2,6 +2,7 @@ from ultralytics import YOLO
 import cv2
 import os
 import math
+import platform
 
 from moviepy.editor import VideoFileClip, CompositeAudioClip, AudioFileClip
 
@@ -61,6 +62,7 @@ class FaceDetection():
 
         # temp_file_name = video_path.split("/")[-2]
 
+        video_name_without_ext, ext = video_name.split(".")
 
         VideoFileClip(video_path).audio.write_audiofile(
             os.path.join(video_dir, f"audio.mp3")
@@ -75,7 +77,12 @@ class FaceDetection():
             name="face_box",
         )
 
-        video_with_box = VideoFileClip(os.path.join(video_dir, "face_box", video_name))
+        os_type = platform.system()
+        video_with_box = None
+        if os_type == "Darwin" or os_type=="Linux":
+            video_with_box = VideoFileClip(os.path.join(video_dir, "face_box", f"{video_name_without_ext}.mp4"))
+        else:
+            video_with_box = VideoFileClip(os.path.join(video_dir, "face_box", f"{video_name_without_ext}.avi"))
         new_audio_clip = AudioFileClip(os.path.join(video_dir, f"audio.mp3"))
 
         video_with_box.audio = CompositeAudioClip([new_audio_clip])

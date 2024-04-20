@@ -3,6 +3,7 @@
 import UploadsTable from "@/components/UploadsTable";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import Image from "next/image";
 import { useRef, useState } from "react";
 
 const Home: React.FC = () => {
@@ -11,12 +12,16 @@ const Home: React.FC = () => {
   const [seed, setSeed] = useState<number>(1);
   return (
     <div className="space-y-6 w-full pb-6">
-      <text className="text-5xl font-medium">Moodify</text>
-      <p className="text-darkPurple text-xl">
-        Find out how your investors feel. Uncover hidden insights
-        <br></br>
-        from their voices and expressions.
-      </p>
+      <div className="flex justify-center">
+        <Image
+          src="/logo.png"
+          alt="Moodify logo"
+          width={400}
+          height={200}
+          className="pl-3"
+        />
+      </div>
+
       <Button onClick={() => fileInputRef.current?.click()}>
         Upload Video
       </Button>
