@@ -365,13 +365,24 @@ code {
           : 'default'
     });
   </script>
-<h1 id="moodify">Moodify</h1>
+<div align="center">
+  <p>
+    <a href="https://github.com/danieltwh/moodify/" target="_blank">
+      <img width="65%" src="https://raw.githubusercontent.com/danieltwh/moodify/main/frontend/public/logo.png">
+    </a>
+  </p>
+</div>
+<a href="https://github.com/danieltwh/moodify/" target="_blank">Moodify</a> is a machine learning powered solution that transforms subtle facial expressions and vocal nuances into clear, actionable insights, enabling you to gauge and respond effectively to your audience sentiments during presentations or helping you analyse your pitch for improvements before your high-stakes meetings. 
+<br></br>
+Please check out the latest application at <a href="https://github.com/danieltwh/moodify/">https://github.com/danieltwh/moodify</a> and start gaining insights into your meetings.
+<br></br>
+<h1 id="div-align%22center%22-moodify-%F0%9F%98%8A%F0%9F%98%90%E2%98%B9%EF%B8%8F-div"><div align="center"> Moodify 😊😐☹️ </div></h1>
 <h2 id="table-of-contents">Table of Contents</h2>
 <ul>
-<li><a href="#MedWatch">Moodify</a>
+<li><a href="#moodify">Moodify</a>
 <ul>
 <li><a href="#table-of-contents">Table of Contents</a></li>
-<li><a href="#Requirements">Requirements</a></li>
+<li><a href="#requirements">Requirements</a></li>
 <li><a href="#project-structure">Project Structure</a></li>
 <li><a href="#notes">Notes</a></li>
 </ul>
@@ -386,7 +397,7 @@ code {
 </ul>
 <h2 id="requirements">Requirements</h2>
 <ol>
-<li>Python 3.9.18</li>
+<li>Python 3.10.7</li>
 <li>Docker installed on your system</li>
 <li>Docker-compose installed on your system</li>
 <li>FFmpeg
@@ -417,9 +428,9 @@ If you see a version number, that means ffmpeg is installed. Otherwise, please f
 │   │   └── speech_to_text  &lt;- for transcription service
 │   └── sql                 &lt;- contains sql scripts
 ├── data                    &lt;- contains datasets for training and testing
-│   ├── Faces updated       &lt;- contains the latest facial data for training and testing the model
+│   ├── Webcam Images       &lt;- contains the latest facial data for training and testing the model
+│   ├── Webcam Images (Augmented) &lt;- contains augmented facial data 
 │   ├── sample_videos       &lt;- contains sample data for testing the application
-│   └── xxx
 ├── frontend                &lt;- Moodify web app (frontend)
 │   ├── app                 &lt;- main frontend app
 │   └── components          &lt;- frontend components
